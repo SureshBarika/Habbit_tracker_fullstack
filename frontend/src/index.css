@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Full height */
+html, body, #root {
+  height: 100%;
+}
+
+/* Background + text settings */
+body {
+  @apply bg-gradient-to-b from-white to-accent/30 text-slate-800;
+}
+
+/* Card styling */
+.card {
+  @apply bg-white rounded-2xl shadow-md p-4;
+}
+

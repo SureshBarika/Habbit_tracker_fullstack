@@ -10,7 +10,7 @@ export const addCheckin = async (req, res) => {
     const existing = await Checkin.findOne({ habitId, date: today });
     if (existing) return res.json(existing);
 
-    const checkin = await Checkin.create({ habitId, date: today });
+    const checkin = await Checkin.create({ habitId, date: today, });
 
     res.json(checkin);
   } catch (error) {

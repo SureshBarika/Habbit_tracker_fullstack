@@ -17,13 +17,27 @@ export default function App() {
     try {
       setLoading(true)
       const res = await fetchHabits(userId)
-      setHabits(res.data)
+      const filteredHabits = res.data.map(habit => {
+        habit.done = false
+        return habit
+      })
+      setHabits(filteredHabits)
     } catch (err) {
       console.error(err)
     } finally {
       setLoading(false)
     }
   }
+
+  const updateDone = (habitId) => {
+    setHabits(habits.map(h => {
+      if (h._id === habitId) {
+        h.done = true
+      }
+      return h
+    }))
+  }
+
 
   useEffect(() => { load() }, [])
 
@@ -107,6 +121,7 @@ export default function App() {
               habit={h}
               onDeleted={handleDelete}
               onUpdated={load}
+              updateDone={updateDone}
             />
           ))}
         </div>

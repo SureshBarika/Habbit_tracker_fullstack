@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { addCheckin, getStreak } from '../api'
 
-export default function HabitCard({ habit, onDeleted, onUpdated }) {
-  const [done, setDone] = useState(false)
+export default function HabitCard({ habit, onDeleted, onUpdated, updateDone }) {
+  const [done, setDone] = useState(habit.done || false)
   const [streak, setStreak] = useState(0)
   const [deleting, setDeleting] = useState(false)
+  console.log(habit)
 
   useEffect(() => {
     getStreak(habit._id)
@@ -22,9 +23,12 @@ export default function HabitCard({ habit, onDeleted, onUpdated }) {
       const r = await getStreak(habit._id)
       console.debug('[HabitCard] getStreak response', r && r.data)
       setStreak(r.data.streak)
+      updateDone(habit._id)
+
 
       // mark done after successful request
       setDone(true)
+    
 
       if (onUpdated) onUpdated()
     } catch (err) {
@@ -77,7 +81,7 @@ export default function HabitCard({ habit, onDeleted, onUpdated }) {
           disabled={done}
           className={`px-4 py-2 rounded-lg font-semibold shadow-sm transition active:scale-95 ${done ? 'bg-slate-200 text-slate-500 cursor-default' : 'bg-sky-300'}`}
         >
-          {done ? 'Done ✓' : '✓ Done ?'}
+          {done ? 'Done ✓' : '✓ Done'}
         </button>
 
         <button

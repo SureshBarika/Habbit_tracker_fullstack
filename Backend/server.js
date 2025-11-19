@@ -21,11 +21,7 @@ const app = express();
 // production and optionally `PREVIEW_FRONTEND_URL` for preview/staging.
 // During local development include the Vite dev server origin so
 // requests from `http://localhost:5173` are allowed.
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.PREVIEW_FRONTEND_URL,
-  ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:5173'] : []),
-].filter(Boolean);
+
 
 // Request logging middleware (before CORS)
 app.use((req, res, next) => {
@@ -33,21 +29,31 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS Configuration
-app.use(cors({
-  origin: (origin, callback) => {
-    console.log(`  CORS check: origin="${origin}", allowed=${allowedOrigins.includes(origin)}`);
-    // Allow requests with no origin (e.g., curl, server-to-server)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    // Not allowed
-    const err = new Error('CORS origin denied');
-    return callback(err);
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-  preflightContinue: false,
-}));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://habbit-tracker-frontend-black.vercel.app",  // change this
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow server-to-server
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.log("❌ CORS Blocked:", origin);
+        return callback(new Error("Not allowed by CORS: " + origin));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
+
+// important
+
 
 console.log('CORS allowed origins:', allowedOrigins.length ? allowedOrigins : 'none (will allow server-to-server requests only)');
 
